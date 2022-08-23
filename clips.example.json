@@ -1,0 +1,16 @@
+[
+  {
+    "id": "rickroll",
+    "name": "Never Gonna Give You Up",
+    "file": "rickroll.mp4",
+    "tags": ["troll", "music"]
+  },
+  {
+    "id": "some-meme",
+    "name": "Some meme",
+    "file": "meme.mp4",
+    "start": 197.3,
+    "end": 201.2,
+    "tags": ["meme"]
+  }
+]

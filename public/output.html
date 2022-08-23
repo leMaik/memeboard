@@ -1,0 +1,53 @@
+<html>
+  <body style="margin: 0">
+    <video
+      style="
+        object-fit: cover;
+        object-position: center;
+        width: 100%;
+        height: 100%;
+      "
+      id="video"
+    ></video>
+  </body>
+
+  <script src="/socket.io/socket.io.min.js"></script>
+  <script>
+    const id = location.pathname.split("/")[2];
+
+    const video = document.getElementById("video");
+
+    const socket = io();
+    socket.emit("join", id);
+    socket.on("play", (filename) => {
+      video.src = `/videos/${filename}`;
+      video.style.display = "block";
+      setTimeout(() => {
+        video.play();
+      }, 200); // short delay, feels better when a clip starts
+    });
+
+    socket.on("stop", () => {
+      video.pause();
+      video.src = "";
+    });
+
+    socket.on("reload", () => {
+      location.reload();
+    });
+
+    video.addEventListener("ended", () => {
+      setTimeout(() => {
+        video.style.display = "none";
+        video.src = "";
+      }, 200);
+    });
+
+    video.addEventListener("pause", () => {
+      setTimeout(() => {
+        video.style.display = "none";
+        video.src = "";
+      }, 200);
+    });
+  </script>
+</html>
