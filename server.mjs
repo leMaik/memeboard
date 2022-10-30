@@ -1,5 +1,6 @@
 import http from "http";
 import express from "express";
+import cors from "cors";
 import { Server } from "socket.io";
 import { readFile } from "fs/promises";
 import { spawn } from "child_process";
@@ -7,6 +8,7 @@ import path from "path";
 import fs from "fs";
 
 const app = express();
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 const server = http.createServer(app);
 const io = new Server().listen(server);
