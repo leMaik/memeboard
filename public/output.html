@@ -49,5 +49,13 @@
         video.src = "";
       }, 200);
     });
+
+    window.addEventListener("message", (event) => {
+      if (event.data === "mute") {
+        video.muted = true;
+      } else if (event.data === "unmute") {
+        video.muted = false;
+      }
+    });
   </script>
 </html>
