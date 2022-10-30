@@ -2,6 +2,9 @@ import http from "http";
 import express from "express";
 import { Server } from "socket.io";
 import { readFile } from "fs/promises";
+import { spawn } from "child_process";
+import path from "path";
+import fs from "fs";
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -48,6 +51,36 @@ app.post("/streams/:id", async (req, res) => {
 app.get("/clips", async (req, res) => {
   const clips = await getClips();
   res.json(clips).end();
+});
+
+app.get("/clips/:id/thumbnail.jpg", async (req, res) => {
+  const clips = await getClips();
+  const clip = clips.find((c) => c.id === req.params.id);
+  if (!clip) {
+    return res.status(404).end();
+  }
+
+  const thumbnail = `${clip.id}.jpg`;
+
+  if (!fs.existsSync(path.resolve("./videos/thumbnails", thumbnail))) {
+    console.log("creating", thumbnail);
+    await new Promise((resolve) => {
+      const p = spawn("ffmpeg", [
+        "-i",
+        path.resolve("./videos", clip.file),
+        "-vframes",
+        "1",
+        "-an",
+        "-ss",
+        clip.start || 0,
+        path.resolve("./videos/thumbnails", thumbnail),
+      ]);
+      p.on("exit", () => resolve());
+    });
+  }
+  res.sendFile(thumbnail, {
+    root: "./videos/thumbnails",
+  });
 });
 
 app.use("/videos", express.static("./videos"));
