@@ -30,6 +30,8 @@ io.on("connection", (socket) => {
 
 app.use("/streams/:id/buttons", express.static("./buttons/dist"));
 
+app.use("/", express.static("./buttons/dist"));
+
 app.get("/streams/:id", (req, res) => {
   res.sendFile("output.html", { root: "./public" });
 });

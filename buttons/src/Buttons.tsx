@@ -60,7 +60,7 @@ function App() {
 
   useEffect(() => {
     let stale = false;
-    fetch("http://localhost:3000/clips")
+    fetch("/clips")
       .then((res) => res.json())
       .then((clips) => {
         if (!stale) {

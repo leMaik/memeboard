@@ -1,6 +1,14 @@
-import React from "react";
+import React, { useRef } from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
+import Buttons from "./Buttons";
+import Home from "./Home";
+
+function App() {
+  const page = useRef(
+    window.location.pathname.startsWith("/streams/") ? Buttons : Home
+  );
+  return <page.current />;
+}
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
