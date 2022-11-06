@@ -127,12 +127,12 @@ function App() {
 
   return (
     <CssVarsProvider>
-      <Box sx={{ display: "flex" }}>
+      <Box sx={{ display: "flex", padding: 1, height: "calc(100vh - 16px)" }}>
         <Box
           sx={{
             display: "grid",
             gridTemplateRows: "auto 1fr",
-            height: "100vh",
+            height: "100%",
           }}
         >
           <TextField
