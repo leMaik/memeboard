@@ -12,7 +12,15 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 const server = http.createServer(app);
 const io = new Server().listen(server);
-server.listen(process.env.PORT || 3000);
+server.listen(
+  process.env.PORT || 3000,
+  process.env.ADDRESS || "0.0.0.0",
+  () => {
+    console.log(
+      `Running at http://${server.address().address}:${server.address().port}`
+    );
+  }
+);
 
 io.on("connection", (socket) => {
   socket.on("join", (payload) => {
@@ -20,7 +28,7 @@ io.on("connection", (socket) => {
   });
 });
 
-app.use("/streams/:id/buttons", express.static("./memeboard-buttons/dist"));
+app.use("/streams/:id/buttons", express.static("./buttons/dist"));
 
 app.get("/streams/:id", (req, res) => {
   res.sendFile("output.html", { root: "./public" });
