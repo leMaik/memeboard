@@ -9,6 +9,20 @@
       "
       id="video"
     ></video>
+
+    <div
+      id="interact-first-hint"
+      style="
+        display: none;
+        border: 2px solid #d3232f;
+        color: #d3232f;
+        position: absolute;
+        top: 0;
+      "
+    >
+      Due to browser limitations, you need to interact with this page once (ie.
+      click on it) to play videos via the buttons or webhooks.
+    </div>
   </body>
 
   <script src="/socket.io/socket.io.min.js"></script>
@@ -22,8 +36,23 @@
     socket.on("play", (filename) => {
       video.src = `/videos/${filename}`;
       video.style.display = "block";
-      setTimeout(() => {
-        video.play();
+      setTimeout(async () => {
+        try {
+          await video.play();
+        } catch (e) {
+          if (e.message.includes("interact with the document first")) {
+            document.getElementById("interact-first-hint").style.display =
+              "block";
+            const removeHint = () => {
+              document.getElementById("interact-first-hint").style.display =
+                "none";
+              document.removeEventListener("click", removeHint);
+            };
+            document.addEventListener("click", removeHint);
+          } else {
+            console.error("Failed to play clip", e);
+          }
+        }
       }, 200); // short delay, feels better when a clip starts
     });
 
