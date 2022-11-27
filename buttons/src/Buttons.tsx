@@ -7,13 +7,16 @@ import {
   CardOverflow,
   Chip,
   IconButton,
+  Slider,
   TextField,
   Typography,
+  LinearProgress,
 } from "@mui/joy";
 import OpenInNew from "mdi-material-ui/OpenInNew";
 import VolumeHigh from "mdi-material-ui/VolumeHigh";
 import VolumeOff from "mdi-material-ui/VolumeOff";
 import fuzzysort from "fuzzysort";
+import Replay from "mdi-material-ui/Replay";
 
 interface Clip {
   id: string;
@@ -124,6 +127,58 @@ function App() {
     previewRef.current?.contentWindow?.postMessage(muted ? "unmute" : "mute");
     setMuted(!muted);
   }, [muted]);
+
+  const [filename, setFilename] = useState("");
+  const [time, setTime] = useState(0);
+  useEffect(() => {
+    document.addEventListener("dragover", (e) => {
+      e.preventDefault();
+    });
+
+    document.addEventListener("drop", async (e) => {
+      e.preventDefault();
+      const file = e.dataTransfer?.files[0];
+      if (file) {
+        const url = URL.createObjectURL(new Blob([await file.arrayBuffer()]));
+        setFilename(file.name);
+        const video = document.getElementById("video") as HTMLVideoElement;
+        const handleLoadedData = () => {
+          setMax(video.duration);
+          setRange([0, video.duration]);
+          video.removeEventListener("loadeddata", handleLoadedData);
+        };
+        video.addEventListener("loadeddata", handleLoadedData);
+        video.src = url;
+      }
+    });
+
+    const video = document.getElementById("video") as HTMLVideoElement;
+    video.addEventListener("timeupdate", () => {
+      setTimeout(video.currentTime);
+    });
+  }, []);
+
+  const [max, setMax] = useState(0);
+  const [range, setRange] = useState([0, 0]);
+  const handleChangeRange = useCallback(
+    (e: Event, newRange: [min: number, max: number]) => {
+      setRange(newRange);
+    },
+    []
+  );
+  useEffect(() => {
+    const video = document.getElementById("video") as HTMLVideoElement;
+    const url = video.src.split("#")[0];
+    video.src = `${url}#t=${range[0]},${range[1]}`;
+    video.play();
+  }, [range]);
+  const handleReplayVideo = useCallback(() => {
+    const video = document.getElementById("video") as HTMLVideoElement;
+    const url = video.src.split("#")[0];
+    video.src = "";
+    video.src = `${url}#t=${range[0]},${range[1]}`;
+    video.play();
+  });
 
   return (
     <CssVarsProvider>
@@ -275,6 +330,58 @@ function App() {
             <OpenInNew />
           </IconButton>
         </Card>
+        <div>
+          <video width="400" height="200" id="video" />
+          <LinearProgress value={(time / max) * 100} />
+          <div>
+            <Slider
+              value={range}
+              min={0}
+              max={max}
+              step={0.01}
+              onChange={handleChangeRange}
+              valueLabelDisplay="auto"
+              size="sm"
+              variant="solid"
+              valueLabelFormat={(value) => `${value} s`}
+            />
+            <IconButton onClick={handleReplayVideo}>
+              <Replay />
+            </IconButton>
+          </div>
+          <TextField
+            label="Start"
+            type="number"
+            value={range[0]}
+            onChange={(e) => {
+              setRange((r) => [parseFloat(e.target.value), r[1]]);
+            }}
+            endDecorator="s"
+          />
+          <TextField
+            label="End"
+            type="number"
+            value={range[1]}
+            onChange={(e) => {
+              setRange((r) => [r[0], parseFloat(e.target.value)]);
+            }}
+            endDecorator="s"
+          />
+          <pre>
+            {JSON.stringify(
+              {
+                id: "",
+                name: "",
+                file: filename,
+                start: range[0],
+                end: range[1],
+                tags: [],
+              },
+              null,
+              2
+            )}
+          </pre>
+        </div>
       </Box>
     </CssVarsProvider>
   );
