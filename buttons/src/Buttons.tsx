@@ -17,6 +17,7 @@ import VolumeHigh from "mdi-material-ui/VolumeHigh";
 import VolumeOff from "mdi-material-ui/VolumeOff";
 import fuzzysort from "fuzzysort";
 import Replay from "mdi-material-ui/Replay";
+import StreamDeck from "./StreamDeck";
 
 interface Clip {
   id: string;
@@ -381,6 +382,7 @@ function App() {
               2
             )}
           </pre>
+          <StreamDeck />
         </div>
       </Box>
     </CssVarsProvider>

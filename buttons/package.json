@@ -9,9 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@elgato-stream-deck/webhid": "^5.7.0",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@mui/joy": "^5.0.0-alpha.55",
+    "buffer": "^6.0.3",
+    "events": "^3.3.0",
     "fuzzysort": "^2.0.1",
     "mdi-material-ui": "^7.6.0",
     "react": "^18.2.0",
