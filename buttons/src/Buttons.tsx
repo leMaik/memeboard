@@ -18,15 +18,7 @@ import VolumeOff from "mdi-material-ui/VolumeOff";
 import fuzzysort from "fuzzysort";
 import Replay from "mdi-material-ui/Replay";
 import StreamDeck from "./StreamDeck";
-
-interface Clip {
-  id: string;
-  name: string;
-  file: string;
-  start?: number;
-  end?: number;
-  tags: string[];
-}
+import { Clip } from "./Clip";
 
 const streamId = location.href
   .split("/")
@@ -155,7 +147,7 @@ function App() {
 
     const video = document.getElementById("video") as HTMLVideoElement;
     video.addEventListener("timeupdate", () => {
-      setTimeout(video.currentTime);
+      setTime(video.currentTime);
     });
   }, []);
 
@@ -179,7 +171,7 @@ function App() {
     video.src = "";
     video.src = `${url}#t=${range[0]},${range[1]}`;
     video.play();
-  });
+  }, []);
 
   return (
     <CssVarsProvider>
@@ -340,7 +332,7 @@ function App() {
               min={0}
               max={max}
               step={0.01}
-              onChange={handleChangeRange}
+              onChange={handleChangeRange as any}
               valueLabelDisplay="auto"
               size="sm"
               variant="solid"
@@ -382,7 +374,7 @@ function App() {
               2
             )}
           </pre>
-          <StreamDeck />
+          <StreamDeck clips={clips} onPlayClip={handlePlayClip} />
         </div>
       </Box>
     </CssVarsProvider>
