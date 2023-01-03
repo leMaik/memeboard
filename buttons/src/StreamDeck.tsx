@@ -3,6 +3,8 @@ import { Button } from "@mui/joy";
 import type { StreamDeckWeb } from "@elgato-stream-deck/webhid";
 import { Clip } from "./Clip";
 
+const DIM_TIMEOUT_MS = 30_000;
+
 const drawButton = async (
   deck: StreamDeckWeb,
   keyIndex: number,
@@ -75,14 +77,14 @@ export default function StreamDeckComponent({
     let dimTimeout = setTimeout(() => {
       deck.setBrightness(0);
       dimmed = true;
-    }, 5000);
+    }, DIM_TIMEOUT_MS);
     deck.setBrightness(50);
     deck.on("down", (keyIndex) => {
       clearTimeout(dimTimeout);
       dimTimeout = setTimeout(() => {
         deck.setBrightness(0);
         dimmed = true;
-      }, 5000);
+      }, DIM_TIMEOUT_MS);
       if (dimmed) {
         deck.setBrightness(50);
         dimmed = false;
