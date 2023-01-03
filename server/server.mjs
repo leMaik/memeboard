@@ -86,7 +86,9 @@ app.get("/clips/:id/thumbnail.jpg", async (req, res) => {
         "1",
         "-an",
         "-ss",
-        clip.start || 0,
+        clip.start != null && clip.end != null
+          ? Math.min(clip.start + (clip.end - clip.start) / 2, clip.start + 3)
+          : clip.start || 0,
         path.resolve("./videos/thumbnails", thumbnail),
       ]);
       p.on("exit", () => resolve());
