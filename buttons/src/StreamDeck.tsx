@@ -98,7 +98,6 @@ export default function StreamDeckComponent({
       const clip = getClipRef.current?.(keyIndex);
       if (clip) {
         drawButton(deck, keyIndex, clip);
-        playClipRef.current?.(keyIndex);
       }
     });
 
