@@ -24,6 +24,9 @@ const streamId = location.href
   .split("/")
   .find((part, i, parts) => parts[i - 1] === "streams");
 
+const formatTime = (seconds: number) =>
+  `${(seconds / 60) | 0}:${`${Math.round(seconds) % 60}`.padStart(2, "0")}`;
+
 function App() {
   const [filter, setFilter] = useState("");
   const tags = useMemo(
@@ -217,7 +220,7 @@ function App() {
                   row
                   sx={{
                     maxWidth: 800,
-                    height: 84 - 32,
+                    height: 86,
                     gap: 2,
                     marginBottom: 1,
                     "&:hover": {
@@ -235,8 +238,8 @@ function App() {
                       }}
                       onClick={() => handlePlayClip(clip)}
                     >
-                      <div
-                        style={{
+                      <Box
+                        sx={{
                           background: `url(/clips/${clip.id}/thumbnail.jpg)`,
                           backgroundSize: "cover",
                           backgroundPosition: "center",
@@ -244,6 +247,22 @@ function App() {
                           height: "100%",
                         }}
                       />
+                      {clip.start != null && clip.end != null && (
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            zIndex: 2,
+                            background: "rgba(0,0,0,0.7)",
+                            fontSize: "12px",
+                            padding: "2px 4px",
+                            right: 0,
+                            bottom: 0,
+                            color: "#fff",
+                          }}
+                        >
+                          {formatTime(clip.end - clip.start)}
+                        </Box>
+                      )}
                     </AspectRatio>
                   </CardOverflow>
                   <div style={{ overflow: "hidden" }}>
